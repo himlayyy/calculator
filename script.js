@@ -3,14 +3,21 @@ let equationScreen = document.querySelector('.equation-screen');
 let buttons = document.querySelectorAll('button');
 let numbers = document.querySelectorAll('.numbers');
 let operateArr = [];
-let operations = []
+let operations = [];
+let events = []
+let results = [];
+let result;
 
-function clearScreen(){
+function clearScreen() {
+    console.log("clear screen...");
     numberScreen.innerHTML = "";
 }
+function clearEquation() {
+    equationScreen.innerHTML = "";
+}
 function evaluate(button) {
-    var result = Number;
-    let operation = button.id;
+    let operation = operations.shift();
+
     switch (operation) {
         case 'add':
             result = operateArr[0] + operateArr[1];
@@ -25,26 +32,36 @@ function evaluate(button) {
             result = operateArr[0] / operateArr[1];
             break;
     }
-    console.log(result);
-    for(i=0;i<=operateArr.length;i++){
-        operateArr.pop();
-    }
-    console.log(`operateArr: ${operateArr}`);
-    operations.pop();
+    operateArr.pop();
+    operateArr.shift();
     operateArr.push(result);
-    numberScreen.innerHTML = result;
-    equationScreen.innerHTML = result;
-    clearScreen();   
+    equationScreen.innerHTML = result + button.innerHTML;
+    displayResult(result);
 }
 function displayNumber(button) {
+    if (numberScreen.classList.contains('result')) {
+        numberScreen.classList.remove('result');
+        numberScreen.innerHTML = "";
+    }
     numberScreen.innerHTML = numberScreen.innerHTML + button.innerHTML;
 }
+function displayResult(result) {
+    numberScreen.innerHTML = result;
+    numberScreen.classList.add('result');
+}
 function displayEquation(button) {
+    console.log(button.innerHTML);
     operateArr.push(parseFloat(numberScreen.innerHTML));
     operations.push(button.id)
+    console.log(operations[0]);
     console.log(`Array: ${operateArr}`);
-    equationScreen.innerHTML = equationScreen.innerHTML + numberScreen.innerHTML + button.innerHTML;
-    clearScreen()
+    if (operateArr.length != 2 || operateArr.length != 0) {
+        equationScreen.innerHTML = equationScreen.innerHTML + numberScreen.innerHTML + button.innerHTML;
+        numberScreen.innerHTML = "";
+    }
+    else if (operateArr[length] == 1) {
+        equationScreen.innerHTML = operateArr[operateArr.length - 1] + button.innerHTML;
+    }
     if (operateArr.length == 2) {
         evaluate(button);
     }
@@ -56,11 +73,14 @@ function display(button) {
     else if (button.classList.contains('functions')) {
         displayEquation(button);
     }
+    else if (button.id == "clear") {
+        console.log("Clear pressed! Clearing operateArr");
+        clearScreen();
+        ;
+    }
+    events.push(button.innerHTML);
 }
+buttons.forEach(button => button.addEventListener("click", function () {
+    display(button);
+}))
 
-function start(){
-    buttons.forEach(button => button.addEventListener("click", function () {
-        display(button);
-    }))
-}
-start();
