@@ -17,7 +17,6 @@ function clearEquation() {
 }
 function evaluate(button) {
     let operation = operations.shift();
-
     switch (operation) {
         case 'add':
             result = operateArr[0] + operateArr[1];
@@ -37,11 +36,15 @@ function evaluate(button) {
     operateArr.push(result);
     equationScreen.innerHTML = result + button.innerHTML;
     displayResult(result);
+    
 }
 function displayNumber(button) {
     if (numberScreen.classList.contains('result')) {
         numberScreen.classList.remove('result');
         numberScreen.innerHTML = "";
+    }
+    if(button.id == 'decimal'){
+        button.disabled = true;
     }
     numberScreen.innerHTML = numberScreen.innerHTML + button.innerHTML;
 }
@@ -55,6 +58,10 @@ function displayEquation(button) {
     operations.push(button.id)
     console.log(operations[0]);
     console.log(`Array: ${operateArr}`);
+    let decimal = document.querySelector('#decimal');
+    if(decimal.disabled){
+        decimal.disabled = false;
+    }
     if (operateArr.length != 2 || operateArr.length != 0) {
         equationScreen.innerHTML = equationScreen.innerHTML + numberScreen.innerHTML + button.innerHTML;
         numberScreen.innerHTML = "";
@@ -72,11 +79,24 @@ function display(button) {
     }
     else if (button.classList.contains('functions')) {
         displayEquation(button);
-    }
+    }    
     else if (button.id == "clear") {
         console.log("Clear pressed! Clearing operateArr");
         clearScreen();
-        ;
+        clearEquation();
+        console.log(operateArr);
+        while(operateArr.length != 0){
+            operateArr.pop()
+        }
+        console.log(operateArr);
+        operations.pop();
+        console.log(operations);
+    }
+    else if (button.id == "delete"){
+        let temp = [...numberScreen.innerHTML];
+        temp.pop();
+        temp = temp.join('');
+        numberScreen.innerHTML = temp;
     }
     events.push(button.innerHTML);
 }
