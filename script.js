@@ -92,12 +92,7 @@ function display(button) {
         operations.pop();
         console.log(operations);
     }
-    else if (button.id == "delete"){
-        let temp = [...numberScreen.innerHTML];
-        temp.pop();
-        temp = temp.join('');
-        numberScreen.innerHTML = temp;
-    }
+   
     events.push(button.innerHTML);
 }
 buttons.forEach(button => button.addEventListener("click", function () {
