@@ -6,12 +6,15 @@ let operateArr = [];
 let operations = [];
 let result;
 
+// Clears numberScreen contents
 function clearScreen() {
     numberScreen.innerHTML = "0";
 }
+// Clears equationScreen contents
 function clearEquation() {
     equationScreen.innerHTML = "";
 }
+// Evaluates operation and operateArr contents
 function evaluate(button) {
     let operation = operations.shift();
     switch (operation) {
@@ -41,6 +44,8 @@ function evaluate(button) {
         console.log("Negative button not used");
     }
 }
+
+// Creates the nummberScreen output
 function displayNumber(button) {
     if (numberScreen.classList.contains('result')) {
         numberScreen.classList.remove('result');
@@ -50,6 +55,8 @@ function displayNumber(button) {
         button.disabled = true;
     }
     numberScreen.innerHTML = numberScreen.innerHTML + button.innerHTML;
+
+    // Checks if the first number of the digit is zero, doesn't display leading zero if true
     var temp = [...numberScreen.innerHTML];
     if (temp[0] == 0) {
         temp.shift();
@@ -57,17 +64,23 @@ function displayNumber(button) {
         numberScreen.innerHTML = temp;
     }
 }
+// Displays evaulate function result in numberScreen
 function displayResult(result) {
     numberScreen.innerHTML = result;
     numberScreen.classList.add('result');
 }
+
+// Creates the output for the equationScreen. Triggered by clicking 'function' buttons
 function displayEquation(button) {
     operateArr.push(parseFloat(numberScreen.innerHTML));
     operations.push(button.id)
+
+    // Toggles decimal point so it can only be used once per number
     let decimal = document.querySelector('#decimal');
     if (decimal.disabled) {
         decimal.disabled = false;
     }
+    // Create equationScreen contents
     if (operateArr.length != 2 || operateArr.length != 0) {
         equationScreen.innerHTML = equationScreen.innerHTML + numberScreen.innerHTML + button.innerHTML;
         numberScreen.innerHTML = "";
@@ -75,10 +88,14 @@ function displayEquation(button) {
     else if (operateArr[length] == 1) {
         equationScreen.innerHTML = operateArr[operateArr.length - 1] + button.innerHTML;
     }
+
+    // Checks operateArr length, if equals 2 evaluates the equation
     if (operateArr.length == 2) {
         evaluate(button);
     }
 }
+
+// Determines what to display based on button attributes
 function display(button) {
     if (button.classList.contains('number')) {
         displayNumber(button);
@@ -97,7 +114,6 @@ function display(button) {
     else if (button.classList.contains("special")) {
         var temp = [...numberScreen.innerHTML];
         if (button.id == "negative") {
-            // var temp = [...numberScreen.innerHTML];
             if (!button.classList.contains('toggled')) {
                 if (temp[0] == '-') {
                     button.classList.add('toggled');
@@ -117,7 +133,6 @@ function display(button) {
             }
         }
         else if (button.id == "delete") {
-            // let temp = [...numberScreen.innerHTML];
             temp.pop();
             temp = temp.join('');
             numberScreen.innerHTML = temp;
