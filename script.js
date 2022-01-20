@@ -4,13 +4,10 @@ let buttons = document.querySelectorAll('button');
 let numbers = document.querySelectorAll('.numbers');
 let operateArr = [];
 let operations = [];
-let events = []
-let results = [];
 let result;
 
 function clearScreen() {
-    console.log("clear screen...");
-    numberScreen.innerHTML = "";
+    numberScreen.innerHTML = "0";
 }
 function clearEquation() {
     equationScreen.innerHTML = "";
@@ -25,7 +22,7 @@ function evaluate(button) {
             result = operateArr[0] - operateArr[1];
             break;
         case 'multiply':
-            result = operateArr[0] - operateArr[1];
+            result = operateArr[0] * operateArr[1];
             break;
         case 'divide':
             result = operateArr[0] / operateArr[1];
@@ -36,30 +33,39 @@ function evaluate(button) {
     operateArr.push(result);
     equationScreen.innerHTML = result + button.innerHTML;
     displayResult(result);
-    
+    try {
+        let toggled = document.querySelector(".toggled");
+        toggled.classList.remove('toggled');
+    }
+    catch {
+        console.log("Negative button not used");
+    }
 }
 function displayNumber(button) {
     if (numberScreen.classList.contains('result')) {
         numberScreen.classList.remove('result');
         numberScreen.innerHTML = "";
     }
-    if(button.id == 'decimal'){
+    if (button.id == 'decimal' || button.id == 'negative') {
         button.disabled = true;
     }
     numberScreen.innerHTML = numberScreen.innerHTML + button.innerHTML;
+    var temp = [...numberScreen.innerHTML];
+    if (temp[0] == 0) {
+        temp.shift();
+        temp = temp.join();
+        numberScreen.innerHTML = temp;
+    }
 }
 function displayResult(result) {
     numberScreen.innerHTML = result;
     numberScreen.classList.add('result');
 }
 function displayEquation(button) {
-    console.log(button.innerHTML);
     operateArr.push(parseFloat(numberScreen.innerHTML));
     operations.push(button.id)
-    console.log(operations[0]);
-    console.log(`Array: ${operateArr}`);
     let decimal = document.querySelector('#decimal');
-    if(decimal.disabled){
+    if (decimal.disabled) {
         decimal.disabled = false;
     }
     if (operateArr.length != 2 || operateArr.length != 0) {
@@ -79,23 +85,52 @@ function display(button) {
     }
     else if (button.classList.contains('functions')) {
         displayEquation(button);
-    }    
+    }
     else if (button.id == "clear") {
-        console.log("Clear pressed! Clearing operateArr");
         clearScreen();
         clearEquation();
-        console.log(operateArr);
-        while(operateArr.length != 0){
+        while (operateArr.length != 0) {
             operateArr.pop()
         }
-        console.log(operateArr);
         operations.pop();
-        console.log(operations);
     }
-   
-    events.push(button.innerHTML);
+    else if (button.classList.contains("special")) {
+        var temp = [...numberScreen.innerHTML];
+        if (button.id == "negative") {
+            // var temp = [...numberScreen.innerHTML];
+            if (!button.classList.contains('toggled')) {
+                if (temp[0] == '-') {
+                    button.classList.add('toggled');
+                }
+                else {
+                    temp.unshift('-');
+                    temp = temp.join('');
+                    numberScreen.innerHTML = temp;
+                    button.classList.add('toggled');
+                }
+            }
+            else {
+                button.classList.remove('toggled');
+                temp.shift();
+                temp = temp.join('');
+                numberScreen.innerHTML = temp;
+            }
+        }
+        else if (button.id == "delete") {
+            // let temp = [...numberScreen.innerHTML];
+            temp.pop();
+            temp = temp.join('');
+            numberScreen.innerHTML = temp;
+        }
+        else if (button.id == "decimal") {
+            button.disabled = true;
+            displayNumber(button);
+        }
+    }
 }
 buttons.forEach(button => button.addEventListener("click", function () {
     display(button);
 }))
-
+if (operateArr.length == 0) {
+    numberScreen.innerHTML = "0";
+}
